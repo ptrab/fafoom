@@ -106,9 +106,7 @@ class GaussianObject():
             searchfile = open("gaussian_job.log", "r")
             for line in searchfile:
                 if s in line:
-                    print line
                     energy_tmp = float(line.split()[4].split('\n')[0])
-                    print energy_tmp
             searchfile.close()
             self.energy = energy_tmp
 
