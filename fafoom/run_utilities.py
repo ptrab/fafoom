@@ -96,6 +96,9 @@ def detect_energy_function(params):
         elif params['energy_function'] in ['ORCA', 'Orca', 'orca']:
             print_output("Local optimization will be performed with ORCA.")
             energy_function = "orca"
+        elif params['energy_function'] in ['gaussian', 'Gaussian', 'G09', 'G03']:
+            print_output("Local optimization will be performed with Gaussian.")
+            energy_function = "gaussian"
         elif params['energy_function'] in ['ff', 'force_field', 'RDKit',
                                            'rdkit']:
             print_output("Local optimization will be performed with RDKit.")
@@ -122,6 +125,13 @@ def optimize(structure, energy_function, params, name=None):
         structure.perform_orca(params['commandline'],
                                params['memory'],
                                params['orca_call'], **linked_params)
+    elif energy_function == "gaussian":
+        linked_params = {}
+        for key in ["chargemult", "nprocs"]:
+            if key in params:
+                linked_params[str(key)] = params[str(key)]
+        structure.perform_gaussian(params['commandline'],
+                               params['memory'], **linked_params)
     elif energy_function == "ff":
         linked_params = {}
         for key in ["steps", "force_tol", "energy_tol"]:

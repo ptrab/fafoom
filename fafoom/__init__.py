@@ -4,5 +4,6 @@ from pyaims import AimsObject
 from pyff import FFObject
 from pynwchem import NWChemObject
 from pyorca import OrcaObject
+from pygaussian import GaussianObject
 from utilities import *
 from run_utilities import *

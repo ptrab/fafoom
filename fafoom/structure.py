@@ -29,6 +29,7 @@ from pyaims import AimsObject
 from pyff import FFObject
 from pynwchem import NWChemObject
 from pyorca import OrcaObject
+from pygaussian import GaussianObject
 
 from utilities import (
     aims2sdf,
@@ -400,6 +401,23 @@ class Structure:
         self.energy = orca_object.get_energy()
         self.initial_sdf_string = self.sdf_string
         self.sdf_string = xyz2sdf(orca_object.get_xyz_string_opt(),
+                                  self.mol_info.template_sdf_string)
+
+        for dof in self.dof:
+            setattr(dof, "initial_values", dof.values)
+            dof.update_values(self.sdf_string)
+
+    def perform_gaussian(self, commandline, memory, **kwargs):
+        """Generate the orca input, run orca, assign new attributes and
+        update attribute values."""
+        gaussian_object = GaussianObject(commandline, memory, **kwargs)
+        gaussian_object.clean()
+        gaussian_object.generate_input(self.sdf_string)
+        gaussian_object.run_gaussian()
+        gaussian_object.clean()
+        self.energy = gaussian_object.get_energy()
+        self.initial_sdf_string = self.sdf_string
+        self.sdf_string = xyz2sdf(gaussian_object.get_xyz_string_opt(),
                                   self.mol_info.template_sdf_string)
 
         for dof in self.dof:
